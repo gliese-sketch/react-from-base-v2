@@ -24,16 +24,23 @@
     <script type="text/babel">
       const appEl = document.querySelector("#app");
       const rootEl = ReactDOM.createRoot(appEl);
+
       function App() {
+        const [taskArr, setTaskArr] = React.useState([]);
+
+        const handleTaskUpdate = (value) => {
+          setTaskArr([...taskArr, value]);
+        };
+
         return (
           <div>
-            <AddTask />
-            <TaskList />
+            <AddTask onSubmit={handleTaskUpdate} />
+            <TaskList data={taskArr} />
           </div>
         );
       }
 
-      function AddTask() {
+      function AddTask({ onSubmit }) {
         const inputEl = React.useRef(null);
 
         // Activate when mounted
@@ -46,7 +53,7 @@
             className="flex justify-center items-center flex-col"
             onSubmit={(e) => {
               e.preventDefault();
-              console.log(inputEl.current.value);
+              onSubmit(inputEl.current.value);
               inputEl.current.value = "";
             }}
           >
@@ -67,7 +74,16 @@
         );
       }
 
-      function TaskList() {}
+      function TaskList({ data }) {
+        console.log("from task list", data);
+        return (
+          <h1>
+            {data.map((item, index) => (
+              <p key={item + index}>{item}</p>
+            ))}
+          </h1>
+        );
+      }
 
       function SingleTask() {}
 
