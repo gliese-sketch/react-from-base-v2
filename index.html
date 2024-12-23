@@ -79,13 +79,20 @@
         return (
           <h1>
             {data.map((item, index) => (
-              <p key={item + index}>{item}</p>
+              <SingleTask key={index} title={item} />
             ))}
           </h1>
         );
       }
 
-      function SingleTask() {}
+      function SingleTask({ title }) {
+        return (
+          <div>
+            <p className="text-blue-700">{title}</p>
+            <button>Delete</button>
+          </div>
+        );
+      }
 
       rootEl.render(
         <React.StrictMode>
