@@ -26,16 +26,31 @@
       const rootEl = ReactDOM.createRoot(appEl);
 
       function App() {
-        const [taskArr, setTaskArr] = React.useState([]);
+        const [taskArr, setTaskArr] = React.useState([
+          {
+            id: 1,
+            title: "First Item",
+          },
+          {
+            id: 2,
+            title: "First Item",
+          },
+        ]);
 
         const handleTaskUpdate = (value) => {
-          setTaskArr([...taskArr, value]);
+          setTaskArr((prev) => {
+            return [...prev, value];
+          });
+        };
+
+        const handleTaskDelete = (id) => {
+          setTaskArr((prevState) => prevState.filter((obj) => obj.id !== id));
         };
 
         return (
           <div>
             <AddTask onSubmit={handleTaskUpdate} />
-            <TaskList data={taskArr} />
+            <TaskList data={taskArr} deleteTask={handleTaskDelete} />
           </div>
         );
       }
@@ -53,7 +68,13 @@
             className="flex justify-center items-center flex-col"
             onSubmit={(e) => {
               e.preventDefault();
-              onSubmit(inputEl.current.value);
+
+              if (!inputEl.current.value) return;
+
+              onSubmit({
+                id: crypto.randomUUID(),
+                title: inputEl.current.value,
+              });
               inputEl.current.value = "";
             }}
           >
@@ -74,22 +95,32 @@
         );
       }
 
-      function TaskList({ data }) {
+      function TaskList({ data, deleteTask }) {
         console.log("from task list", data);
         return (
           <h1>
-            {data.map((item, index) => (
-              <SingleTask key={index} title={item} />
+            {data.map((obj) => (
+              <SingleTask
+                key={obj.id}
+                title={obj.title}
+                deleteTask={() => deleteTask(obj.id)}
+                id={obj.id}
+              />
             ))}
           </h1>
         );
       }
 
-      function SingleTask({ title }) {
+      function SingleTask({ title, deleteTask, id }) {
         return (
           <div>
             <p className="text-blue-700">{title}</p>
-            <button>Delete</button>
+            <button
+              className="bg-blue-700 text-white rounded p-2"
+              onClick={deleteTask}
+            >
+              Delete
+            </button>
           </div>
         );
       }
